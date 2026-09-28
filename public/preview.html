@@ -220,6 +220,12 @@
         }
 
         document.getElementById('status').textContent = 'Oppdatert ✓';
+
+        // Send confirmation back to parent
+        window.parent.postMessage(
+          { type: 'AD_CONFIG_ACK', data: { timestamp: new Date().toISOString() } },
+          '*'
+        );
       }
     });
   </script>
