@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avis Mockup</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Georgia, serif;
+      background-color: #fff;
+      padding: 20px;
+    }
+
+    .newspaper {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+    }
+
+    .header {
+      border-bottom: 3px solid #333;
+      padding-bottom: 15px;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .ad-container {
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      padding: 20px;
+      background-color: #f9f9f9;
+      margin: 30px 0;
+      min-height: 200px;
+    }
+
+    .ad-heading {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 15px;
+      min-height: 30px;
+    }
+
+    .ad-image {
+      width: 100%;
+      height: 150px;
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 14px;
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #e3f2fd;
+      border-left: 4px solid #2196F3;
+      border-radius: 2px;
+      font-size: 12px;
+      color: #1565c0;
+    }
+  </style>
+</head>
+<body>
+  <div class="newspaper">
+    <div class="header">
+      <h1>Adresseavisen</h1>
+      <p>Dagens nyheter</p>
+    </div>
+
+    <div class="ad-container">
+      <div class="ad-heading" id="adHeading">Overskrift kommer her</div>
+      <div class="ad-image" id="adImage">Bilde kommer her</div>
+      <div class="status" id="status">Venter på data...</div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('message', (event) => {
+      // For Steg 1: bare validere og oppdatere overskriften
+      if (event.data?.type === 'AD_CONFIG_UPDATE') {
+        const { payload } = event.data;
+
+        if (payload.heading !== undefined) {
+          document.getElementById('adHeading').textContent = payload.heading || 'Overskrift kommer her';
+        }
+
+        document.getElementById('status').textContent = 'Oppdatert ✓';
+      }
+    });
+  </script>
+</body>
+</html>
