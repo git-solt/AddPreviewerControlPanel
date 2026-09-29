@@ -29,7 +29,7 @@ export function SaveButton({ config, onSaveSuccess }: SaveButtonProps) {
     setStatus('idle')
 
     try {
-      const response = await fetch('http://localhost:3001/api/ads', {
+      const response = await fetch('/api/ads', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

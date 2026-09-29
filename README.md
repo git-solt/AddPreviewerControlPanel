@@ -4,15 +4,22 @@ En interaktiv demo for Polaris Media som viser sanntids annonsekonfigurasjon og 
 
 ## Arkitektur
 
+### Deployment
+- **Single origin**: Frontend (React build) og backend (Express) kjører på samme port
+- Ingen CORS-problemer
+- Enkel deployment
+
 ### Frontend (React + TypeScript)
 - **Vite** for rask utvikling og building
 - **React 19** med TypeScript for typesikker komponentutvikling
 - **postMessage API** for sikker kommunikasjon med iframe
+- Bygges til statiske filer i `dist/`
 
 ### Backend (Node.js + Express)
+- Serverer React build-filene fra `dist/`
 - REST API for å lagre og hente annonsekonfigurasjoner
-- CORS-støtte for frontend-integrasjon
 - In-memory storage (for demo-formål)
+- Single port for både frontend og backend
 
 ### iframe Preview
 - Standalone HTML-side som simulerer en avis
@@ -58,25 +65,41 @@ En interaktiv demo for Polaris Media som viser sanntids annonsekonfigurasjon og 
 npm install
 ```
 
-## Utvikling
+## Utvikling (begge fra samme terminal)
 
-Terminal 1 - Frontend:
 ```bash
+# Terminal 1: Frontend dev-server
 npm run dev
 ```
 
-Terminal 2 - Backend:
+Åpne http://localhost:5173 (Vite sin default port)
+
+## Produksjon (single origin)
+
+Frontend og backend hostes sammen på samme origin:
+
 ```bash
-npm run server
+# Build React og start server
+npm start
 ```
 
-Åpne http://localhost:3000
+Serveren kjører på http://localhost:3001 (kan endres med `PORT` env-var)
+
+Eller bygg først og start separat:
+
+```bash
+npm run build
+npm run server
+```
 
 ## Bygging
 
 ```bash
+# Build React til dist/
 npm run build
 ```
+
+Express serverer automatisk React-filene fra `dist/` på `/` og API fra `/api/`
 
 ## Prosjektstruktur
 

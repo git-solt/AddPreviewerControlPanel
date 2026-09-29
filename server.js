@@ -1,12 +1,14 @@
 import express from 'express'
-import cors from 'cors'
+import { fileURLToPath } from 'url'
+import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 
-app.use(cors())
 app.use(express.json())
+app.use(express.static(path.join(__dirname, 'dist')))
 
 // In-memory storage
 const ads = new Map()
@@ -65,6 +67,16 @@ app.get('/api/ads/:id', (req, res) => {
   }
 })
 
+// Catch-all for unmatched API routes (404 with JSON)
+app.use('/api', (req, res) => {
+  res.status(404).json({ error: 'API endpoint not found' })
+})
+
+// SPA fallback - serve index.html for all non-API routes
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+})
+
 app.listen(PORT, () => {
-  console.log(`🚀 Backend running on http://localhost:${PORT}`)
+  console.log(`🚀 Ad Preview Dashboard running on http://localhost:${PORT}`)
 })

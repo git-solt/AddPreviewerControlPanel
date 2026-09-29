@@ -187,14 +187,12 @@
   </div>
 
   <script>
-    // Security: validate origin
-    const ALLOWED_ORIGIN = window.location.protocol === 'file:'
-      ? '*'
-      : 'http://localhost:3000';
+    // Security: validate origin (allow parent window's origin)
+    const ALLOWED_ORIGIN = window.location.origin;
 
     window.addEventListener('message', (event) => {
       // Origin validation
-      if (ALLOWED_ORIGIN !== '*' && event.origin !== ALLOWED_ORIGIN) {
+      if (event.origin !== ALLOWED_ORIGIN) {
         console.warn(`[Security] Message blocked from untrusted origin: ${event.origin}`);
         return;
       }
