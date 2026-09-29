@@ -1,4 +1,5 @@
 import React from 'react'
+import { SaveButton } from './SaveButton'
 
 export interface AdConfig {
   heading: string
@@ -80,6 +81,8 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
           onChange={(e) => handleChange('imageUrl', e.target.value)}
         />
       </div>
+
+      <SaveButton config={config} />
     </div>
   )
 }
