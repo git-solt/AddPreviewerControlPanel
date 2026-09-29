@@ -12,9 +12,16 @@ export function SaveButton({ config, onSaveSuccess }: SaveButtonProps) {
   const [message, setMessage] = useState('')
 
   const handleSave = async () => {
+    // Validation
     if (!config.heading.trim()) {
       setStatus('error')
       setMessage('Overskrift er påkrevd')
+      return
+    }
+
+    if (config.imageUrl && !isValidUrl(config.imageUrl)) {
+      setStatus('error')
+      setMessage('Ugyldig bilde-URL')
       return
     }
 
@@ -50,6 +57,15 @@ export function SaveButton({ config, onSaveSuccess }: SaveButtonProps) {
       )
     } finally {
       setLoading(false)
+    }
+  }
+
+  const isValidUrl = (url: string): boolean => {
+    try {
+      new URL(url)
+      return true
+    } catch {
+      return false
     }
   }
 

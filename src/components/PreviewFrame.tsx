@@ -20,6 +20,12 @@ export function PreviewFrame({ config, onMessageSent, onMessageReceived }: Previ
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
+      // Security: validate origin (iframe is same-origin in development)
+      if (event.origin !== window.location.origin && event.origin !== 'null') {
+        console.warn(`[Security] Message blocked from untrusted origin: ${event.origin}`)
+        return
+      }
+
       if (event.data?.type === 'AD_CONFIG_ACK') {
         onMessageReceived?.(event.data)
       }

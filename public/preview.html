@@ -187,45 +187,63 @@
   </div>
 
   <script>
+    // Security: validate origin
+    const ALLOWED_ORIGIN = window.location.protocol === 'file:'
+      ? '*'
+      : 'http://localhost:3000';
+
     window.addEventListener('message', (event) => {
+      // Origin validation
+      if (ALLOWED_ORIGIN !== '*' && event.origin !== ALLOWED_ORIGIN) {
+        console.warn(`[Security] Message blocked from untrusted origin: ${event.origin}`);
+        return;
+      }
+
       if (event.data?.type === 'AD_CONFIG_UPDATE') {
-        const { payload } = event.data;
-        const container = document.getElementById('adContainer');
+        try {
+          const { payload } = event.data;
+          const container = document.getElementById('adContainer');
 
-        if (payload.heading !== undefined) {
-          document.getElementById('adHeading').textContent = payload.heading || 'Overskrift kommer her';
-        }
-
-        if (payload.body !== undefined) {
-          document.getElementById('adBody').textContent = payload.body;
-        }
-
-        if (payload.ctaText !== undefined) {
-          const ctaBtn = document.getElementById('adCta');
-          ctaBtn.textContent = payload.ctaText || 'Klikk her';
-          ctaBtn.style.display = payload.ctaText ? 'inline-block' : 'none';
-        }
-
-        if (payload.imageUrl !== undefined) {
-          const imgDiv = document.getElementById('adImage');
-          if (payload.imageUrl) {
-            imgDiv.innerHTML = `<img src="${payload.imageUrl}" alt="Ad image">`;
-          } else {
-            imgDiv.textContent = 'Bilde kommer her';
+          if (payload.heading !== undefined) {
+            document.getElementById('adHeading').textContent = payload.heading || 'Overskrift kommer her';
           }
+
+          if (payload.body !== undefined) {
+            document.getElementById('adBody').textContent = payload.body;
+          }
+
+          if (payload.ctaText !== undefined) {
+            const ctaBtn = document.getElementById('adCta');
+            ctaBtn.textContent = payload.ctaText || 'Klikk her';
+            ctaBtn.style.display = payload.ctaText ? 'inline-block' : 'none';
+          }
+
+          if (payload.imageUrl !== undefined) {
+            const imgDiv = document.getElementById('adImage');
+            if (payload.imageUrl) {
+              imgDiv.innerHTML = `<img src="${payload.imageUrl}" alt="Ad image">`;
+            } else {
+              imgDiv.textContent = 'Bilde kommer her';
+            }
+          }
+
+          if (payload.theme !== undefined) {
+            const validThemes = ['blue', 'red', 'green', 'dark'];
+            const theme = validThemes.includes(payload.theme) ? payload.theme : 'blue';
+            container.className = `ad-container theme-${theme}`;
+          }
+
+          document.getElementById('status').textContent = 'Oppdatert ✓';
+
+          // Send confirmation back to parent (only to trusted origin)
+          window.parent.postMessage(
+            { type: 'AD_CONFIG_ACK', data: { timestamp: new Date().toISOString() } },
+            ALLOWED_ORIGIN
+          );
+        } catch (error) {
+          console.error('[Error] Failed to process message:', error);
+          document.getElementById('status').textContent = 'Feil ved oppdatering';
         }
-
-        if (payload.theme !== undefined) {
-          container.className = `ad-container theme-${payload.theme}`;
-        }
-
-        document.getElementById('status').textContent = 'Oppdatert ✓';
-
-        // Send confirmation back to parent
-        window.parent.postMessage(
-          { type: 'AD_CONFIG_ACK', data: { timestamp: new Date().toISOString() } },
-          '*'
-        );
       }
     });
   </script>
