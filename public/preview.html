@@ -239,6 +239,8 @@
       justify-content: center;
       color: #999;
       font-size: 12px;
+      background-size: cover;
+      background-position: center;
     }
 
     .article-content h3 {
@@ -268,14 +270,11 @@
       </div>
     </div>
 
-    <!-- Hero Article -->
-    <div class="hero-article">
-      <h2>Kollektivtrafikk: Nye ruter i sentrum...</h2>
-      <p>Bystyret har vedtatt nye rutekjøringer som skal implementeres fra neste semester. Dette vil påvirke flere tusen passasjerer daglig.</p>
-    </div>
+    <!-- Articles Container -->
+    <div id="articlesContainer"></div>
 
     <!-- Advertisement Section -->
-    <div class="ad-section">
+    <div class="ad-section" id="adSection">
       <div class="ad-container theme-blue" id="adContainer">
         <div class="ad-heading" id="adHeading">Overskrift kommer her</div>
         <div class="ad-body" id="adBody"></div>
@@ -284,18 +283,71 @@
         <div class="status" id="status">Venter på data...</div>
       </div>
     </div>
-
-    <!-- Media Left Article -->
-    <div class="article-media-left">
-      <div class="article-image">Bilde</div>
-      <div class="article-content">
-        <h3>Vær i høgen: Sol og varmere ime stil på høsten...</h3>
-        <p>Værvarslinga viser at det blir pent og varmt de neste dagene. Perfekt tid for høsttur!</p>
-      </div>
-    </div>
   </div>
 
   <script>
+    // Article data structure
+    const articles = [
+      {
+        id: "art-101",
+        title: "Kollektivtrafikk: Nye ruter i sentrum...",
+        summary: "Bystyret har vedtatt nye rutekjøringer som skal implementeres fra neste semester. Dette vil påvirke flere tusen passasjerer daglig.",
+        imageUrl: "https://vcdn.polarismedia.no/d6e58bbd-f427-3e04-8bdc-2ed38f8d6455?fit=crop&h=700&q=80&tight=false&w=1000",
+        imageAspect: "16/9",
+        layoutVariant: "hero",
+        publishedAt: "2026-10-04T22:30:00Z"
+      },
+      {
+        id: "art-102",
+        title: "Vær i høgen: Sol og varmere ime stil på høsten...",
+        summary: "Værvarslinga viser at det blir pent og varmt de neste dagene. Perfekt tid for høsttur!",
+        imageUrl: "https://vcdn.polarismedia.no/344eb1e3-7831-46ad-b389-9bf7ef359e2b?fit=clip&q=80&tight=false&w=2000",
+        imageAspect: "3/2",
+        layoutVariant: "media-left",
+        publishedAt: "2026-10-04T21:15:00Z"
+      }
+    ];
+
+    // Render articles based on data structure
+    function renderArticles() {
+      const container = document.getElementById('articlesContainer');
+      let adSectionInserted = false;
+
+      articles.forEach(article => {
+        if (article.layoutVariant === 'hero') {
+          const heroDiv = document.createElement('div');
+          heroDiv.className = 'hero-article';
+          heroDiv.innerHTML = `
+            <h2>${article.title}</h2>
+            <p>${article.summary}</p>
+          `;
+          container.appendChild(heroDiv);
+
+          // Insert advertisement section right after hero article
+          if (!adSectionInserted) {
+            const adSection = document.getElementById('adSection')
+            container.appendChild(adSection);
+            adSectionInserted = true;
+          }
+        } else if (article.layoutVariant === 'media-left') {
+          const mediaDiv = document.createElement('div');
+          mediaDiv.className = 'article-media-left';
+          mediaDiv.innerHTML = `
+            <div class="article-image" style="background-image: url('${article.imageUrl}'); background-size: cover; background-position: center;"></div>
+            <div class="article-content">
+              <h3>${article.title}</h3>
+              <p>${article.summary}</p>
+            </div>
+          `;
+          container.appendChild(mediaDiv);
+        }
+      });
+
+    }
+
+    // Initialize articles on page load
+    document.addEventListener('DOMContentLoaded', renderArticles);
+
     // Security: validate origin (allow parent window's origin)
     const ALLOWED_ORIGIN = window.location.origin;
 
