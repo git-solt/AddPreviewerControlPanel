@@ -1,3 +1,12 @@
+.header {
+  background-color: #063e61;
+  color:white;
+  height: 50px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+}
+
 .dashboard {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -263,3 +272,5 @@
     transform: translateY(0);
   }
 }
+
+
