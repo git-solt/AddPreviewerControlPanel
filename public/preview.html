@@ -66,6 +66,16 @@
       margin-bottom: 20px;
     }
 
+    .hero-image {
+      width: 100%;
+      height: auto;
+      max-height: 300px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
     .hero-article h2 {
       font-size: 28px;
       font-weight: bold;
@@ -261,7 +271,8 @@
   <div class="newspaper">
     <!-- Header -->
     <div class="top-header">
-      <div class="logo">Abresia</div>
+      <!-- 𝔗𝔯𝔬𝔫𝔡𝔥𝔧𝔢𝔪𝔰𝔣𝔧𝔬𝔯𝔡𝔢𝔫𝔰 𝔅𝔲𝔡𝔰𝔱𝔦𝔨𝔨𝔢  -->
+      <div class="logo">𝔗𝔯𝔬𝔫𝔡𝔥𝔢𝔦𝔪𝔰 𝔗𝔢𝔩𝔢𝔤𝔯𝔞𝔭𝔥</div>
       <div class="nav-menu">
         <a href="#">Nyheter</a>
         <a href="#">Sport</a>
@@ -292,8 +303,8 @@
         id: "art-101",
         title: "Kollektivtrafikk: Nye ruter i sentrum...",
         summary: "Bystyret har vedtatt nye rutekjøringer som skal implementeres fra neste semester. Dette vil påvirke flere tusen passasjerer daglig.",
-        imageUrl: "https://vcdn.polarismedia.no/d6e58bbd-f427-3e04-8bdc-2ed38f8d6455?fit=crop&h=700&q=80&tight=false&w=1000",
-        imageAspect: "16/9",
+        imageUrl: "https://vcdn.polarismedia.no/c0ac67cb-d74e-3333-a8d2-4af279c93a95?fit=clip&h=800&q=80&tight=false&w=1000",
+        imageAspect: "10/7",
         layoutVariant: "hero",
         publishedAt: "2026-10-04T22:30:00Z"
       },
@@ -318,6 +329,7 @@
           const heroDiv = document.createElement('div');
           heroDiv.className = 'hero-article';
           heroDiv.innerHTML = `
+            ${article.imageUrl ? `<img src="${article.imageUrl}" alt="${article.title}" class="hero-image">` : ''}
             <h2>${article.title}</h2>
             <p>${article.summary}</p>
           `;
