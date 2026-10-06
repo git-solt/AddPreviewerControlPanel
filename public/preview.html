@@ -20,6 +20,7 @@
       max-width: 800px;
       margin: 0 auto;
       background: white;
+      padding-top: 55px;
     }
 
     /* Header */
@@ -30,6 +31,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
     }
 
     .logo {
@@ -91,16 +97,16 @@
 
     /* Advertisement Container */
     .ad-section {
-      padding: 12px 15px;
+      padding: 18px 20px;
       border: 2px solid #ddd;
       border-radius: 4px;
-      margin: 0 15px 12px 15px;
+      margin: 0 12px 15px 12px;
       background-color: #f9f9f9;
     }
 
     .ad-container {
       border-radius: 4px;
-      padding: 12px;
+      padding: 18px;
       background-color: #f9f9f9;
       min-height: auto;
     }
@@ -153,11 +159,11 @@
 
     .ad-image {
       width: 100%;
-      min-height: 80px;
-      max-height: 150px;
+      min-height: 140px;
+      max-height: 280px;
       background-color: #e0e0e0;
       border-radius: 4px;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -358,7 +364,16 @@
     }
 
     // Initialize articles on page load
-    document.addEventListener('DOMContentLoaded', renderArticles);
+    document.addEventListener('DOMContentLoaded', () => {
+      renderArticles();
+      // Scroll ad section into focus at center of screen
+      setTimeout(() => {
+        const adSection = document.getElementById('adSection');
+        if (adSection) {
+          adSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    });
 
     // Security: validate origin (allow parent window's origin)
     const ALLOWED_ORIGIN = window.location.origin;
