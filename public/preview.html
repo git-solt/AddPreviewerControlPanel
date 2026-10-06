@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="no">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -273,6 +274,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="newspaper">
     <!-- Header -->
@@ -304,6 +306,7 @@
 
   <script>
     // Article data structure
+
     const articles = [
       {
         id: "art-101",
@@ -324,6 +327,19 @@
         publishedAt: "2026-10-04T21:15:00Z"
       }
     ];
+    const adSection = document.getElementById('adSection')
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log("Loaded")
+      const observer = new ResizeObserver(() => {
+        setTimeout(() => {
+          if (adSection) {
+            adSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 100);
+
+      })
+      observer.observe(adSection)
+    })
 
     // Render articles based on data structure
     function renderArticles() {
@@ -343,7 +359,6 @@
 
           // Insert advertisement section right after hero article
           if (!adSectionInserted) {
-            const adSection = document.getElementById('adSection')
             container.appendChild(adSection);
             adSectionInserted = true;
           }
@@ -368,7 +383,6 @@
       renderArticles();
       // Scroll ad section into focus at center of screen
       setTimeout(() => {
-        const adSection = document.getElementById('adSection');
         if (adSection) {
           adSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
@@ -421,13 +435,15 @@
 
           document.getElementById('status').textContent = 'Oppdatert ✓';
 
-          // Scroll ad into view when size changes (especially for images)
-          setTimeout(() => {
-            const adSection = document.getElementById('adSection');
-            if (adSection) {
-              adSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-          }, 100);
+          // Scroll ad into view when size changes
+          //TODO This simply scrolls all updates unto view. SHould probably use resize observer and react only to size change.
+
+          // setTimeout(() => {
+          //   const adSection = document.getElementById('adSection');
+          //   if (adSection) {
+          //     adSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          //   }
+          // }, 100);
 
           // Send confirmation back to parent (only to trusted origin)
           window.parent.postMessage(
@@ -449,4 +465,5 @@
     }, "*")
   </script>
 </body>
+
 </html>
