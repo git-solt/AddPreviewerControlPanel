@@ -10,6 +10,7 @@ const DEFAULT_CONFIG: AdConfig = {
   ctaText: '',
   theme: 'blue',
   imageUrl: '',
+  adLabel: 'ad',
 }
 
 export default function App() {

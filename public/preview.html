@@ -105,6 +105,36 @@
       background-color: #f9f9f9;
     }
 
+    .ad-label-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 8px;
+    }
+
+    .ad-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 8px;
+      border-radius: 3px;
+    }
+
+    .ad-label.label-ad {
+      background-color: #e3ece6;
+      color: #3d6b4f;
+    }
+
+    .ad-label.label-sponsored {
+      background-color: #2b2b2b;
+      color: #fff;
+    }
+
+    .ad-label.label-advertiser {
+      background-color: #d6eaf8;
+      color: #1f5f8b;
+    }
+
     .ad-container {
       border-radius: 4px;
       padding: 18px;
@@ -171,6 +201,8 @@
       color: #999;
       font-size: 11px;
       overflow: hidden;
+      background-image: url("./placeholder.png");
+
     }
 
     .ad-container.theme-dark .ad-image {
@@ -294,6 +326,9 @@
 
     <!-- Advertisement Section -->
     <div class="ad-section" id="adSection">
+      <div class="ad-label-row">
+        <span class="ad-label label-ad" id="adLabel">Annonse</span>
+      </div>
       <div class="ad-container theme-blue" id="adContainer">
         <div class="ad-heading" id="adHeading">Overskrift kommer her</div>
         <div class="ad-body" id="adBody"></div>
@@ -425,6 +460,18 @@
             } else {
               imgDiv.textContent = 'Bilde kommer her';
             }
+          }
+
+          if (payload.adLabel !== undefined) {
+            const labels = {
+              ad: 'Annonse',
+              sponsored: 'Sponset innhold',
+              advertiser: 'Annonsørinnhold'
+            };
+            const key = Object.prototype.hasOwnProperty.call(labels, payload.adLabel) ? payload.adLabel : 'ad';
+            const labelEl = document.getElementById('adLabel');
+            labelEl.textContent = labels[key];
+            labelEl.className = `ad-label label-${key}`;
           }
 
           if (payload.theme !== undefined) {
