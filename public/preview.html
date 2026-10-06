@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="no">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,67 +13,163 @@
     }
 
     body {
-      font-family: Georgia, serif;
-      background-color: #fff;
-      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background-color: #f5f5f5;
     }
 
     .newspaper {
-      max-width: 600px;
+      max-width: 800px;
       margin: 0 auto;
       background: white;
+      padding-top: 55px;
     }
 
-    .header {
-      border-bottom: 3px solid #333;
-      padding-bottom: 15px;
-      margin-bottom: 30px;
+    /* Header */
+    .top-header {
+      background-color: #003d7a;
+      color: white;
+      padding: 8px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
     }
 
-    .header h1 {
-      font-size: 36px;
+    .logo {
+      font-size: 18px;
       font-weight: bold;
-      margin-bottom: 5px;
     }
 
-    .header p {
+    .nav-menu {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .nav-menu a {
+      color: white;
+      text-decoration: none;
       font-size: 14px;
+    }
+
+    .nav-menu a:hover {
+      opacity: 0.8;
+    }
+
+    .hamburger {
+      font-size: 24px;
+      cursor: pointer;
+      color: white;
+    }
+
+    /* Hero Article */
+    .hero-article {
+      padding: 15px 15px;
+      border-bottom: 2px solid #ddd;
+      margin-bottom: 12px;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: auto;
+      max-height: 150px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .hero-article h2 {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .hero-article p {
+      font-size: 12px;
       color: #666;
+      line-height: 1.4;
+    }
+
+    /* Advertisement Container */
+    .ad-section {
+      padding: 18px 20px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      margin: 0 12px 15px 12px;
+      background-color: #f9f9f9;
+    }
+
+    .ad-label-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 8px;
+    }
+
+    .ad-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 8px;
+      border-radius: 3px;
+    }
+
+    .ad-label.label-ad {
+      background-color: #e3ece6;
+      color: #3d6b4f;
+    }
+
+    .ad-label.label-sponsored {
+      background-color: #2b2b2b;
+      color: #fff;
+    }
+
+    .ad-label.label-advertiser {
+      background-color: #d6eaf8;
+      color: #1f5f8b;
     }
 
     .ad-container {
-      border: 2px solid #ddd;
       border-radius: 4px;
-      padding: 20px;
+      padding: 18px;
       background-color: #f9f9f9;
-      margin: 30px 0;
       min-height: auto;
     }
 
     .ad-container.theme-blue {
       border-color: #0066cc;
+      border: 2px solid #0066cc;
     }
 
     .ad-container.theme-red {
       border-color: #cc0000;
+      border: 2px solid #cc0000;
     }
 
     .ad-container.theme-green {
       border-color: #00aa00;
+      border: 2px solid #00aa00;
     }
 
     .ad-container.theme-dark {
       border-color: #333;
+      border: 2px solid #333;
       background-color: #333;
       color: white;
     }
 
     .ad-heading {
-      font-size: 24px;
+      font-size: 16px;
       font-weight: bold;
       color: #333;
-      margin-bottom: 10px;
-      min-height: 30px;
+      margin-bottom: 6px;
+      min-height: auto;
     }
 
     .ad-container.theme-dark .ad-heading {
@@ -80,11 +177,11 @@
     }
 
     .ad-body {
-      font-size: 14px;
-      line-height: 1.6;
+      font-size: 11px;
+      line-height: 1.4;
       color: #666;
-      margin-bottom: 15px;
-      min-height: 40px;
+      margin-bottom: 8px;
+      min-height: auto;
     }
 
     .ad-container.theme-dark .ad-body {
@@ -93,17 +190,19 @@
 
     .ad-image {
       width: 100%;
-      min-height: 120px;
-      max-height: 300px;
+      min-height: 140px;
+      max-height: 280px;
       background-color: #e0e0e0;
       border-radius: 4px;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #999;
-      font-size: 12px;
+      font-size: 11px;
       overflow: hidden;
+      background-image: url("./placeholder.png");
+
     }
 
     .ad-container.theme-dark .ad-image {
@@ -118,14 +217,14 @@
 
     .ad-cta {
       display: inline-block;
-      padding: 10px 20px;
+      padding: 6px 12px;
       border-radius: 4px;
       border: none;
       cursor: pointer;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 11px;
       transition: opacity 0.2s;
-      min-width: 120px;
+      min-width: 80px;
       text-align: center;
     }
 
@@ -154,12 +253,12 @@
     }
 
     .status {
-      margin-top: 20px;
-      padding: 10px;
+      margin-top: 8px;
+      padding: 6px;
       background-color: #e3f2fd;
-      border-left: 4px solid #2196F3;
+      border-left: 3px solid #2196F3;
       border-radius: 2px;
-      font-size: 12px;
+      font-size: 10px;
       color: #1565c0;
     }
 
@@ -168,25 +267,163 @@
       border-left-color: #666;
       color: #aaa;
     }
+
+    /* Media Left Article */
+    .article-media-left {
+      display: flex;
+      gap: 12px;
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      align-items: flex-start;
+    }
+
+    .article-image {
+      width: 100px;
+      height: 70px;
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 10px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .article-content h3 {
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    .article-content p {
+      font-size: 11px;
+      color: #666;
+      line-height: 1.4;
+    }
   </style>
 </head>
+
 <body>
   <div class="newspaper">
-    <div class="header">
-      <h1>Adresseavisen</h1>
-      <p>Dagens nyheter</p>
+    <!-- Header -->
+    <div class="top-header">
+      <!-- 𝔗𝔯𝔬𝔫𝔡𝔥𝔧𝔢𝔪𝔰𝔣𝔧𝔬𝔯𝔡𝔢𝔫𝔰 𝔅𝔲𝔡𝔰𝔱𝔦𝔨𝔨𝔢  -->
+      <div class="logo">𝔗𝔯𝔬𝔫𝔡𝔥𝔢𝔦𝔪𝔰 𝔗𝔢𝔩𝔢𝔤𝔯𝔞𝔭𝔥</div>
+      <div class="nav-menu">
+        <a href="#">Nyheter</a>
+        <a href="#">Sport</a>
+        <a href="#">Traveldag</a>
+        <div class="hamburger">☰</div>
+      </div>
     </div>
 
-    <div class="ad-container theme-blue" id="adContainer">
-      <div class="ad-heading" id="adHeading">Overskrift kommer her</div>
-      <div class="ad-body" id="adBody"></div>
-      <div class="ad-image" id="adImage">Bilde kommer her</div>
-      <button class="ad-cta" id="adCta"></button>
-      <div class="status" id="status">Venter på data...</div>
+    <!-- Articles Container -->
+    <div id="articlesContainer"></div>
+
+    <!-- Advertisement Section -->
+    <div class="ad-section" id="adSection">
+      <div class="ad-label-row">
+        <span class="ad-label label-ad" id="adLabel">Annonse</span>
+      </div>
+      <div class="ad-container theme-blue" id="adContainer">
+        <div class="ad-heading" id="adHeading">Overskrift kommer her</div>
+        <div class="ad-body" id="adBody"></div>
+        <div class="ad-image" id="adImage">Bilde kommer her</div>
+        <button class="ad-cta" id="adCta"></button>
+        <div class="status" id="status">Venter på data...</div>
+      </div>
     </div>
   </div>
 
   <script>
+    // Article data structure
+
+    const articles = [
+      {
+        id: "art-101",
+        title: "Kollektivtrafikk: Nye ruter i sentrum...",
+        summary: "Bystyret har vedtatt nye rutekjøringer som skal implementeres fra neste semester. Dette vil påvirke flere tusen passasjerer daglig.",
+        imageUrl: "https://vcdn.polarismedia.no/c0ac67cb-d74e-3333-a8d2-4af279c93a95?fit=clip&h=800&q=80&tight=false&w=1000",
+        imageAspect: "10/7",
+        layoutVariant: "hero",
+        publishedAt: "2026-10-04T22:30:00Z"
+      },
+      {
+        id: "art-102",
+        title: "Vær i høgen: Sol og varmere ime stil på høsten...",
+        summary: "Værvarslinga viser at det blir pent og varmt de neste dagene. Perfekt tid for høsttur!",
+        imageUrl: "https://vcdn.polarismedia.no/344eb1e3-7831-46ad-b389-9bf7ef359e2b?fit=clip&q=80&tight=false&w=2000",
+        imageAspect: "3/2",
+        layoutVariant: "media-left",
+        publishedAt: "2026-10-04T21:15:00Z"
+      }
+    ];
+    const adSection = document.getElementById('adSection')
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log("Loaded")
+      const observer = new ResizeObserver(() => {
+        setTimeout(() => {
+          if (adSection) {
+            adSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 100);
+
+      })
+      observer.observe(adSection)
+    })
+
+    // Render articles based on data structure
+    function renderArticles() {
+      const container = document.getElementById('articlesContainer');
+      let adSectionInserted = false;
+
+      articles.forEach(article => {
+        if (article.layoutVariant === 'hero') {
+          const heroDiv = document.createElement('div');
+          heroDiv.className = 'hero-article';
+          heroDiv.innerHTML = `
+            ${article.imageUrl ? `<img src="${article.imageUrl}" alt="${article.title}" class="hero-image">` : ''}
+            <h2>${article.title}</h2>
+            <p>${article.summary}</p>
+          `;
+          container.appendChild(heroDiv);
+
+          // Insert advertisement section right after hero article
+          if (!adSectionInserted) {
+            container.appendChild(adSection);
+            adSectionInserted = true;
+          }
+        } else if (article.layoutVariant === 'media-left') {
+          const mediaDiv = document.createElement('div');
+          mediaDiv.className = 'article-media-left';
+          mediaDiv.innerHTML = `
+            <div class="article-image" style="background-image: url('${article.imageUrl}'); background-size: cover; background-position: center;"></div>
+            <div class="article-content">
+              <h3>${article.title}</h3>
+              <p>${article.summary}</p>
+            </div>
+          `;
+          container.appendChild(mediaDiv);
+        }
+      });
+
+    }
+
+    // Initialize articles on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      renderArticles();
+      // Scroll ad section into focus at center of screen
+      setTimeout(() => {
+        if (adSection) {
+          adSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    });
+
     // Security: validate origin (allow parent window's origin)
     const ALLOWED_ORIGIN = window.location.origin;
 
@@ -225,6 +462,18 @@
             }
           }
 
+          if (payload.adLabel !== undefined) {
+            const labels = {
+              ad: 'Annonse',
+              sponsored: 'Sponset innhold',
+              advertiser: 'Annonsørinnhold'
+            };
+            const key = Object.prototype.hasOwnProperty.call(labels, payload.adLabel) ? payload.adLabel : 'ad';
+            const labelEl = document.getElementById('adLabel');
+            labelEl.textContent = labels[key];
+            labelEl.className = `ad-label label-${key}`;
+          }
+
           if (payload.theme !== undefined) {
             const validThemes = ['blue', 'red', 'green', 'dark'];
             const theme = validThemes.includes(payload.theme) ? payload.theme : 'blue';
@@ -232,6 +481,16 @@
           }
 
           document.getElementById('status').textContent = 'Oppdatert ✓';
+
+          // Scroll ad into view when size changes
+          //TODO This simply scrolls all updates unto view. SHould probably use resize observer and react only to size change.
+
+          // setTimeout(() => {
+          //   const adSection = document.getElementById('adSection');
+          //   if (adSection) {
+          //     adSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          //   }
+          // }, 100);
 
           // Send confirmation back to parent (only to trusted origin)
           window.parent.postMessage(
@@ -244,12 +503,14 @@
         }
       }
     });
+
     window.parent.postMessage({
-      type: "PREVIEW_READY", 
+      type: "PREVIEW_READY",
       data: {
         timestamp: new Date().toISOString()
       }
     }, "*")
   </script>
 </body>
+
 </html>

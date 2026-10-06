@@ -10,6 +10,7 @@ const DEFAULT_CONFIG: AdConfig = {
   ctaText: '',
   theme: 'blue',
   imageUrl: '',
+  adLabel: 'ad',
 }
 
 export default function App() {
@@ -46,16 +47,23 @@ export default function App() {
   }, [addLog])
 
   return (
-    <div className="dashboard">
-      <div className="left-column">
-        <ConfigForm config={config} onChange={setConfig} />
-        <EventLog events={logs} />
+    <div>
+      <header className='header'>
+        <h2>
+          POLARIS MEDIA | Annonsebygger demo
+        </h2>
+      </header>
+      <div className="dashboard">
+        <div className="left-column">
+          <ConfigForm config={config} onChange={setConfig} />
+          <EventLog events={logs} />
+        </div>
+        <PreviewFrame
+          config={config}
+          onMessageSent={handleMessageSent}
+          onMessageReceived={handleMessageReceived}
+        />
       </div>
-      <PreviewFrame
-        config={config}
-        onMessageSent={handleMessageSent}
-        onMessageReceived={handleMessageReceived}
-      />
     </div>
   )
 }
