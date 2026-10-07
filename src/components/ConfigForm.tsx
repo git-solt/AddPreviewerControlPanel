@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from 'react'
 import { SaveButton } from './SaveButton'
 
 export interface AdConfig {
@@ -14,7 +15,37 @@ interface ConfigFormProps {
   onChange: (config: AdConfig) => void
 }
 
+interface SavedAd extends AdConfig {
+  id: string
+  createdAt: string
+}
+
+const THEME_COLORS: Record<AdConfig['theme'], string> = {
+  blue: '#0066cc',
+  red: '#cc0000',
+  green: '#00aa00',
+  dark: '#333',
+}
+
 export function ConfigForm({ config, onChange }: ConfigFormProps) {
+  const [savedAds, setSavedAds] = useState<SavedAd[]>([])
+  const [loadError, setLoadError] = useState(false)
+
+  const loadSavedAds = useCallback(async () => {
+    try {
+      const response = await fetch('/api/ads')
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      setSavedAds(await response.json())
+      setLoadError(false)
+    } catch {
+      setLoadError(true)
+    }
+  }, [])
+
+  useEffect(() => {
+    loadSavedAds()
+  }, [loadSavedAds])
+
   const handleChange = (field: keyof AdConfig, value: string) => {
     const updated = { ...config, [field]: value }
     onChange(updated)
@@ -22,7 +53,41 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
 
   return (
     <div className="config-panel">
-      <h1>Annonse Konfigurasjon</h1>
+      <div className="config-header">
+        <h1>Annonse Konfigurasjon</h1>
+
+        <details
+          className="saved-ads"
+          onToggle={(e) => {
+            if (e.currentTarget.open) loadSavedAds()
+          }}
+        >
+          <summary>Mine lagrede utkast ({savedAds.length})</summary>
+          <div className="saved-ads-menu">
+            {loadError ? (
+              <p className="saved-ads-empty">Kunne ikke hente lagrede utkast</p>
+            ) : savedAds.length === 0 ? (
+              <p className="saved-ads-empty">Ingen lagrede utkast ennå</p>
+            ) : (
+              <ul>
+                {savedAds.map((ad) => (
+                  <li key={ad.id}>
+                    <span
+                      className="theme-dot"
+                      style={{ backgroundColor: THEME_COLORS[ad.theme] }}
+                      title={ad.theme}
+                    />
+                    <span className="saved-ad-heading">{ad.heading}</span>
+                    <span className="saved-ad-time">
+                      {new Date(ad.createdAt).toLocaleString()}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </details>
+      </div>
 
       <div className="form-group">
         <label htmlFor="heading">Overskrift</label>

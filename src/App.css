@@ -66,8 +66,84 @@
 
 .config-panel h1 {
   font-size: 16px;
-  margin-bottom: 12px;
   color: #333;
+}
+
+.config-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.saved-ads {
+  position: relative;
+  font-size: 13px;
+}
+
+.saved-ads summary {
+  cursor: pointer;
+  color: #555;
+  font-weight: 600;
+  user-select: none;
+}
+
+.saved-ads-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 6px;
+  min-width: 280px;
+  max-height: 220px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.saved-ads-menu ul {
+  list-style: none;
+}
+
+.saved-ads-menu li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.saved-ads-menu li:last-child {
+  border-bottom: none;
+}
+
+.saved-ads-empty {
+  padding: 10px 12px;
+  color: #999;
+  font-style: italic;
+}
+
+.theme-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.saved-ad-heading {
+  flex: 1;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.saved-ad-time {
+  color: #999;
+  font-size: 11px;
+  white-space: nowrap;
 }
 
 .form-group {
