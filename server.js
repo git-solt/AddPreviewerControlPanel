@@ -2,16 +2,31 @@ import express from 'express'
 import { fileURLToPath } from 'url'
 import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
+import fs from 'fs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const PORT = process.env.PORT || 3001
-
+const PERSISTENCE_FILE_STORAGE_PATH = "adds.json"
 app.use(express.json())
 app.use(express.static(path.join(__dirname, 'dist')))
 
-// In-memory storage
+// In-memory storage (Map for id lookups), persisted to a JSON array file
 const ads = new Map()
+
+function persistAds() {
+  fs.writeFileSync(PERSISTENCE_FILE_STORAGE_PATH, JSON.stringify(Array.from(ads.values()), null, 2))
+}
+
+if (fs.existsSync(PERSISTENCE_FILE_STORAGE_PATH)) {
+  // A corrupt file throws here on purpose, so it is never overwritten with an empty list
+  const stored = JSON.parse(fs.readFileSync(PERSISTENCE_FILE_STORAGE_PATH, 'utf-8'))
+  for (const ad of stored) {
+    ads.set(ad.id, ad)
+  }
+} else {
+  persistAds()
+}
 
 // POST /api/ads - Save a new ad configuration
 app.post('/api/ads', (req, res) => {
@@ -36,6 +51,12 @@ app.post('/api/ads', (req, res) => {
     }
 
     ads.set(id, adConfig)
+    try {
+      persistAds()
+    } catch (writeError) {
+      ads.delete(id)
+      throw writeError
+    }
     res.status(201).json(adConfig)
   } catch (error) {
     res.status(500).json({ error: 'Failed to save ad configuration' })
