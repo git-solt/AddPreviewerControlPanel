@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { SaveButton } from './SaveButton'
 
 export interface AdConfig {
@@ -30,6 +30,7 @@ const THEME_COLORS: Record<AdConfig['theme'], string> = {
 export function ConfigForm({ config, onChange }: ConfigFormProps) {
   const [savedAds, setSavedAds] = useState<SavedAd[]>([])
   const [loadError, setLoadError] = useState(false)
+  const detailsRef = useRef<HTMLDetailsElement>(null)
 
   const loadSavedAds = useCallback(async () => {
     try {
@@ -46,6 +47,18 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
     loadSavedAds()
   }, [loadSavedAds])
 
+  const handleSelectSaved = (ad: SavedAd) => {
+    onChange({
+      heading: ad.heading ?? '',
+      body: ad.body ?? '',
+      ctaText: ad.ctaText ?? '',
+      theme: ad.theme ?? 'blue',
+      imageUrl: ad.imageUrl ?? '',
+      adLabel: ad.adLabel ?? 'ad',
+    })
+    if (detailsRef.current) detailsRef.current.open = false
+  }
+
   const handleChange = (field: keyof AdConfig, value: string) => {
     const updated = { ...config, [field]: value }
     onChange(updated)
@@ -57,6 +70,7 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
         <h1>Annonse Konfigurasjon</h1>
 
         <details
+          ref={detailsRef}
           className="saved-ads"
           onToggle={(e) => {
             if (e.currentTarget.open) loadSavedAds()
@@ -72,15 +86,21 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
               <ul>
                 {savedAds.map((ad) => (
                   <li key={ad.id}>
-                    <span
-                      className="theme-dot"
-                      style={{ backgroundColor: THEME_COLORS[ad.theme] }}
-                      title={ad.theme}
-                    />
-                    <span className="saved-ad-heading">{ad.heading}</span>
-                    <span className="saved-ad-time">
-                      {new Date(ad.createdAt).toLocaleString()}
-                    </span>
+                    <button
+                      type="button"
+                      className="saved-ad-item"
+                      onClick={() => handleSelectSaved(ad)}
+                    >
+                      <span
+                        className="theme-dot"
+                        style={{ backgroundColor: THEME_COLORS[ad.theme] }}
+                        title={ad.theme}
+                      />
+                      <span className="saved-ad-heading">{ad.heading}</span>
+                      <span className="saved-ad-time">
+                        {new Date(ad.createdAt).toLocaleString()}
+                      </span>
+                    </button>
                   </li>
                 ))}
               </ul>
