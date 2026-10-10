@@ -11,6 +11,7 @@ const DEFAULT_CONFIG: AdConfig = {
   theme: 'blue',
   imageUrl: '',
   adLabel: 'ad',
+  size: 'large',
 }
 
 export default function App() {

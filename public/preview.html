@@ -105,6 +105,13 @@
       background-color: #f9f9f9;
     }
 
+    .ad-section.size-large { width: auto; }
+    .ad-section.size-medium { width: 75%; margin-left: auto; margin-right: auto; }
+    .ad-section.size-small { width: 50%; margin-left: auto; margin-right: auto; }
+
+    .ad-section.size-small .ad-image { min-height: 90px; max-height: 160px; }
+    .ad-section.size-small .ad-heading { font-size: 14px; }
+
     .ad-label-row {
       display: flex;
       justify-content: flex-end;
@@ -325,7 +332,7 @@
     <div id="articlesContainer"></div>
 
     <!-- Advertisement Section -->
-    <div class="ad-section" id="adSection">
+    <div class="ad-section size-large" id="adSection">
       <div class="ad-label-row">
         <span class="ad-label label-ad" id="adLabel">Annonse</span>
       </div>
@@ -502,6 +509,26 @@
           document.getElementById('status').textContent = 'Feil ved oppdatering';
         }
       }
+    });
+
+    window.addEventListener('message', (event) => {
+      if (event.origin !== ALLOWED_ORIGIN) return;
+      if (event.data?.type !== 'AD_RESIZE') return;
+
+      const validSizes = ['large', 'medium', 'small'];
+      const requested = event.data.payload?.size;
+      const size = validSizes.includes(requested) ? requested : 'large';
+
+      const adSection = document.getElementById('adSection');
+      adSection.classList.remove(...validSizes.map(s => `size-${s}`));
+      adSection.classList.add(`size-${size}`);
+
+      setTimeout(() => adSection.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+
+      window.parent.postMessage(
+        { type: 'AD_RESIZE_ACK', data: { size, timestamp: new Date().toISOString() } },
+        ALLOWED_ORIGIN
+      );
     });
 
     window.parent.postMessage({

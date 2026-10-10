@@ -31,7 +31,7 @@ if (fs.existsSync(PERSISTENCE_FILE_STORAGE_PATH)) {
 // POST /api/ads - Save a new ad configuration
 app.post('/api/ads', (req, res) => {
   try {
-    const { heading, body, ctaText, theme, imageUrl, adLabel } = req.body
+    const { heading, body, ctaText, theme, imageUrl, adLabel, size } = req.body
 
     // Validate required fields
     if (!heading) {
@@ -47,6 +47,7 @@ app.post('/api/ads', (req, res) => {
       theme,
       imageUrl,
       adLabel,
+      size,
       createdAt: new Date().toISOString(),
     }
 

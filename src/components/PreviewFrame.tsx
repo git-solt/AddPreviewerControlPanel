@@ -26,7 +26,7 @@ export function PreviewFrame({ config, onMessageSent, onMessageReceived }: Previ
       }
 
       // Bekreftelse fra iFramen på at config ble tatt imot/oppdatert
-      if (event.data?.type === 'AD_CONFIG_ACK') {
+      if (event.data?.type === 'AD_CONFIG_ACK' || event.data?.type === 'AD_RESIZE_ACK') {
         onMessageReceived?.(event.data)
       }
     }
@@ -45,6 +45,15 @@ export function PreviewFrame({ config, onMessageSent, onMessageReceived }: Previ
     // Varsle foreldrekomponenten om at melding er sendt
     onMessageSent?.(message)
   }, [config, isIframeReady, onMessageSent])
+
+  // 3. Send egen resize-melding når størrelsen endres (og ved handshake)
+  useEffect(() => {
+    if (!isIframeReady || !iframeRef.current?.contentWindow) return
+
+    const message = { type: 'AD_RESIZE', payload: { size: config.size } }
+    iframeRef.current.contentWindow.postMessage(message, '*')
+    onMessageSent?.(message)
+  }, [config.size, isIframeReady, onMessageSent])
 
   return (
     <div className="preview-panel">

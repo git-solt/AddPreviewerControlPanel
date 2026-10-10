@@ -8,7 +8,16 @@ export interface AdConfig {
   theme: 'blue' | 'red' | 'green' | 'dark'
   imageUrl: string
   adLabel: 'ad' | 'sponsored' | 'advertiser'
+  size: AdSize
 }
+
+export type AdSize = 'large' | 'medium' | 'small'
+
+export const AD_SIZES: { value: AdSize; label: string }[] = [
+  { value: 'large', label: 'Stor (100 % bredde)' },
+  { value: 'medium', label: 'Medium (75 % bredde)' },
+  { value: 'small', label: 'Liten (50 % bredde)' },
+]
 
 interface ConfigFormProps {
   config: AdConfig
@@ -58,6 +67,7 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
       theme: ad.theme ?? 'blue',
       imageUrl: ad.imageUrl ?? '',
       adLabel: ad.adLabel ?? 'ad',
+      size: ad.size ?? 'large',
     })
     if (detailsRef.current) detailsRef.current.open = false
   }
@@ -155,17 +165,34 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
         </div>
       </div>
 
-      <div className="form-group">
-        <label htmlFor="adLabel">Merkelapp</label>
-        <select
-          id="adLabel"
-          value={config.adLabel}
-          onChange={(e) => handleChange('adLabel', e.target.value)}
-        >
-          <option value="ad">Annonse</option>
-          <option value="sponsored">Sponset innhold</option>
-          <option value="advertiser">Annonsørinnhold</option>
-        </select>
+      <div className="form-row">
+        <div className="form-group">
+          <label htmlFor="adLabel">Merkelapp</label>
+          <select
+            id="adLabel"
+            value={config.adLabel}
+            onChange={(e) => handleChange('adLabel', e.target.value)}
+          >
+            <option value="ad">Annonse</option>
+            <option value="sponsored">Sponset innhold</option>
+            <option value="advertiser">Annonsørinnhold</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="size">Størrelse</label>
+          <select
+            id="size"
+            value={config.size}
+            onChange={(e) => handleChange('size', e.target.value)}
+          >
+            {AD_SIZES.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="form-group">
