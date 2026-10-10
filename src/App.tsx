@@ -12,6 +12,7 @@ const DEFAULT_CONFIG: AdConfig = {
   imageUrl: '',
   adLabel: 'ad',
   size: 'large',
+  height: 'auto',
 }
 
 export default function App() {

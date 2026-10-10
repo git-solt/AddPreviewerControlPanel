@@ -50,10 +50,10 @@ export function PreviewFrame({ config, onMessageSent, onMessageReceived }: Previ
   useEffect(() => {
     if (!isIframeReady || !iframeRef.current?.contentWindow) return
 
-    const message = { type: 'AD_RESIZE', payload: { size: config.size } }
+    const message = { type: 'AD_RESIZE', payload: { size: config.size, height: config.height } }
     iframeRef.current.contentWindow.postMessage(message, '*')
     onMessageSent?.(message)
-  }, [config.size, isIframeReady, onMessageSent])
+  }, [config.size, config.height, isIframeReady, onMessageSent])
 
   return (
     <div className="preview-panel">

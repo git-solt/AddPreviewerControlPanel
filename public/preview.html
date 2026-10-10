@@ -109,6 +109,36 @@
     .ad-section.size-medium { width: 75%; margin-left: auto; margin-right: auto; }
     .ad-section.size-small { width: 50%; margin-left: auto; margin-right: auto; }
 
+    .ad-section.height-short,
+    .ad-section.height-medium,
+    .ad-section.height-tall {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ad-section.height-short { height: 320px; }
+    .ad-section.height-medium { height: 420px; }
+    .ad-section.height-tall { height: 520px; }
+
+    .ad-section.height-short .ad-container,
+    .ad-section.height-medium .ad-container,
+    .ad-section.height-tall .ad-container {
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ad-section.height-short .ad-image,
+    .ad-section.height-medium .ad-image,
+    .ad-section.height-tall .ad-image {
+      flex: 1 1 0;
+      min-height: 0;
+      max-height: none;
+    }
+
     .ad-section.size-small .ad-image { min-height: 90px; max-height: 160px; }
     .ad-section.size-small .ad-heading { font-size: 14px; }
 
@@ -208,7 +238,7 @@
       color: #999;
       font-size: 11px;
       overflow: hidden;
-      background-image: url("./placeholder.png");
+      /* background-image: url("./placeholder.png"); */
 
     }
 
@@ -220,6 +250,39 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
+    }
+
+    /* With a real image, drop the grey placeholder so nothing is left behind it */
+    .ad-section .ad-image.has-image {
+      background: none;
+      min-height: 0;
+      max-height: none;
+    }
+
+    /* Auto height: full width, natural height up to a cap (crops only above the cap) */
+    .ad-image.has-image img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .ad-section.size-small .ad-image.has-image img { max-height: 150px; }
+
+    /* Fixed height: image fills the whole slot */
+    .ad-section.height-short .ad-image.has-image,
+    .ad-section.height-medium .ad-image.has-image,
+    .ad-section.height-tall .ad-image.has-image {
+      align-items: stretch;
+    }
+
+    .ad-section.height-short .ad-image.has-image img,
+    .ad-section.height-medium .ad-image.has-image img,
+    .ad-section.height-tall .ad-image.has-image img {
+      min-height: 0;
+      max-height: none;
     }
 
     .ad-cta {
@@ -332,7 +395,7 @@
     <div id="articlesContainer"></div>
 
     <!-- Advertisement Section -->
-    <div class="ad-section size-large" id="adSection">
+    <div class="ad-section size-large height-auto" id="adSection">
       <div class="ad-label-row">
         <span class="ad-label label-ad" id="adLabel">Annonse</span>
       </div>
@@ -464,8 +527,10 @@
             const imgDiv = document.getElementById('adImage');
             if (payload.imageUrl) {
               imgDiv.innerHTML = `<img src="${payload.imageUrl}" alt="Ad image">`;
+              imgDiv.classList.add('has-image');
             } else {
               imgDiv.textContent = 'Bilde kommer her';
+              imgDiv.classList.remove('has-image');
             }
           }
 
@@ -519,14 +584,18 @@
       const requested = event.data.payload?.size;
       const size = validSizes.includes(requested) ? requested : 'large';
 
+      const validHeights = ['auto', 'short', 'medium', 'tall'];
+      const requestedHeight = event.data.payload?.height;
+      const height = validHeights.includes(requestedHeight) ? requestedHeight : 'auto';
+
       const adSection = document.getElementById('adSection');
-      adSection.classList.remove(...validSizes.map(s => `size-${s}`));
-      adSection.classList.add(`size-${size}`);
+      adSection.classList.remove(...validSizes.map(s => `size-${s}`), ...validHeights.map(h => `height-${h}`));
+      adSection.classList.add(`size-${size}`, `height-${height}`);
 
       setTimeout(() => adSection.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
 
       window.parent.postMessage(
-        { type: 'AD_RESIZE_ACK', data: { size, timestamp: new Date().toISOString() } },
+        { type: 'AD_RESIZE_ACK', data: { size, height, timestamp: new Date().toISOString() } },
         ALLOWED_ORIGIN
       );
     });

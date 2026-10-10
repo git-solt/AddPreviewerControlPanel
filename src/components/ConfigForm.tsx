@@ -9,14 +9,23 @@ export interface AdConfig {
   imageUrl: string
   adLabel: 'ad' | 'sponsored' | 'advertiser'
   size: AdSize
+  height: AdHeight
 }
 
 export type AdSize = 'large' | 'medium' | 'small'
+export type AdHeight = 'auto' | 'short' | 'medium' | 'tall'
 
 export const AD_SIZES: { value: AdSize; label: string }[] = [
-  { value: 'large', label: 'Stor (100 % bredde)' },
-  { value: 'medium', label: 'Medium (75 % bredde)' },
-  { value: 'small', label: 'Liten (50 % bredde)' },
+  { value: 'large', label: 'Stor (100 %)' },
+  { value: 'medium', label: 'Medium (75 %)' },
+  { value: 'small', label: 'Liten (50 %)' },
+]
+
+export const AD_HEIGHTS: { value: AdHeight; label: string }[] = [
+  { value: 'auto', label: 'Auto' },
+  { value: 'short', label: 'Lav (320 px)' },
+  { value: 'medium', label: 'Middels (420 px)' },
+  { value: 'tall', label: 'Høy (520 px)' },
 ]
 
 interface ConfigFormProps {
@@ -68,6 +77,7 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
       imageUrl: ad.imageUrl ?? '',
       adLabel: ad.adLabel ?? 'ad',
       size: ad.size ?? 'large',
+      height: ad.height ?? 'auto',
     })
     if (detailsRef.current) detailsRef.current.open = false
   }
@@ -180,7 +190,7 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
         </div>
 
         <div className="form-group">
-          <label htmlFor="size">Størrelse</label>
+          <label htmlFor="size">Bredde</label>
           <select
             id="size"
             value={config.size}
@@ -189,6 +199,21 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
             {AD_SIZES.map((s) => (
               <option key={s.value} value={s.value}>
                 {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="height">Høyde</label>
+          <select
+            id="height"
+            value={config.height}
+            onChange={(e) => handleChange('height', e.target.value)}
+          >
+            {AD_HEIGHTS.map((h) => (
+              <option key={h.value} value={h.value}>
+                {h.label}
               </option>
             ))}
           </select>
