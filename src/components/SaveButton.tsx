@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { AdConfig } from './ConfigForm'
+import { AdConfig, SavedAd } from './ConfigForm'
 
 interface SaveButtonProps {
   config: AdConfig
-  onSaveSuccess?: (id: string) => void
+  onSaveSuccess?: (ad: SavedAd) => void
 }
 
 export function SaveButton({ config, onSaveSuccess }: SaveButtonProps) {
@@ -41,10 +41,10 @@ export function SaveButton({ config, onSaveSuccess }: SaveButtonProps) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      const data = await response.json()
+      const data: SavedAd = await response.json()
       setStatus('success')
       setMessage(`Utkast lagret med ID: ${data.id}`)
-      onSaveSuccess?.(data.id)
+      onSaveSuccess?.(data)
 
       // Clear message after 5 seconds
       setTimeout(() => setStatus('idle'), 5000)

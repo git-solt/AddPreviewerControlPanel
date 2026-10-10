@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { SaveButton } from './SaveButton'
 
 export interface AdConfig {
@@ -15,7 +15,7 @@ interface ConfigFormProps {
   onChange: (config: AdConfig) => void
 }
 
-interface SavedAd extends AdConfig {
+export interface SavedAd extends AdConfig {
   id: string
   createdAt: string
 }
@@ -32,20 +32,23 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
   const [loadError, setLoadError] = useState(false)
   const detailsRef = useRef<HTMLDetailsElement>(null)
 
-  const loadSavedAds = useCallback(async () => {
-    try {
-      const response = await fetch('/api/ads')
-      if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      setSavedAds(await response.json())
-      setLoadError(false)
-    } catch {
-      setLoadError(true)
+  useEffect(() => {
+    const loadSavedAds = async () => {
+      try {
+        const response = await fetch('/api/ads')
+        if (!response.ok) throw new Error(`HTTP ${response.status}`)
+        setSavedAds(await response.json())
+        setLoadError(false)
+      } catch {
+        setLoadError(true)
+      }
     }
+    loadSavedAds()
   }, [])
 
-  useEffect(() => {
-    loadSavedAds()
-  }, [loadSavedAds])
+  const handleSaved = (ad: SavedAd) => {
+    setSavedAds((prev) => [...prev, ad])
+  }
 
   const handleSelectSaved = (ad: SavedAd) => {
     onChange({
@@ -69,13 +72,7 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
       <div className="config-header">
         <h1>Annonse Konfigurasjon</h1>
 
-        <details
-          ref={detailsRef}
-          className="saved-ads"
-          onToggle={(e) => {
-            if (e.currentTarget.open) loadSavedAds()
-          }}
-        >
+        <details ref={detailsRef} className="saved-ads">
           <summary>Mine lagrede utkast ({savedAds.length})</summary>
           <div className="saved-ads-menu">
             {loadError ? (
@@ -182,7 +179,7 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
         />
       </div>
 
-      <SaveButton config={config} />
+      <SaveButton config={config} onSaveSuccess={handleSaved} />
     </div>
   )
 }
