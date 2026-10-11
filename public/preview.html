@@ -101,13 +101,19 @@
       padding: 18px 20px;
       border: 2px solid #ddd;
       border-radius: 4px;
-      margin: 0 12px 15px 12px;
+      margin: 0 auto 15px auto;
       background-color: #f9f9f9;
+      transition: width 0.35s ease, height 0.35s ease;
     }
 
-    .ad-section.size-large { width: auto; }
-    .ad-section.size-medium { width: 75%; margin-left: auto; margin-right: auto; }
-    .ad-section.size-small { width: 50%; margin-left: auto; margin-right: auto; }
+    @media (prefers-reduced-motion: reduce) {
+      .ad-section { transition: none; }
+    }
+
+    /* Explicit widths (not auto) so the section can animate between sizes */
+    .ad-section.size-large { width: calc(100% - 24px); }
+    .ad-section.size-medium { width: calc((100% - 24px) * 0.75); }
+    .ad-section.size-small { width: calc((100% - 24px) * 0.5); }
 
     .ad-section.height-short,
     .ad-section.height-medium,
@@ -497,6 +503,128 @@
     // Security: validate origin (allow parent window's origin)
     const ALLOWED_ORIGIN = window.location.origin;
 
+    function handleConfigUpdate(payload) {
+      try {
+        const container = document.getElementById('adContainer');
+
+        if (payload.heading !== undefined) {
+          document.getElementById('adHeading').textContent = payload.heading || 'Overskrift kommer her';
+        }
+
+        if (payload.body !== undefined) {
+          document.getElementById('adBody').textContent = payload.body;
+        }
+
+        if (payload.ctaText !== undefined) {
+          const ctaBtn = document.getElementById('adCta');
+          ctaBtn.textContent = payload.ctaText || 'Klikk her';
+          ctaBtn.style.display = payload.ctaText ? 'inline-block' : 'none';
+        }
+
+        if (payload.imageUrl !== undefined) {
+          const imgDiv = document.getElementById('adImage');
+          if (payload.imageUrl) {
+            imgDiv.innerHTML = `<img src="${payload.imageUrl}" alt="Ad image">`;
+            imgDiv.classList.add('has-image');
+          } else {
+            imgDiv.textContent = 'Bilde kommer her';
+            imgDiv.classList.remove('has-image');
+          }
+        }
+
+        if (payload.adLabel !== undefined) {
+          const labels = {
+            ad: 'Annonse',
+            sponsored: 'Sponset innhold',
+            advertiser: 'Annonsørinnhold'
+          };
+          const key = Object.prototype.hasOwnProperty.call(labels, payload.adLabel) ? payload.adLabel : 'ad';
+          const labelEl = document.getElementById('adLabel');
+          labelEl.textContent = labels[key];
+          labelEl.className = `ad-label label-${key}`;
+        }
+
+        if (payload.theme !== undefined) {
+          const validThemes = ['blue', 'red', 'green', 'dark'];
+          const theme = validThemes.includes(payload.theme) ? payload.theme : 'blue';
+          container.className = `ad-container theme-${theme}`;
+        }
+
+        document.getElementById('status').textContent = 'Oppdatert ✓';
+
+        // TODO: scrolling on every update was disabled; consider a ResizeObserver to scroll only on size changes.
+
+        window.parent.postMessage(
+          { type: 'AD_CONFIG_ACK', data: { timestamp: new Date().toISOString() } },
+          ALLOWED_ORIGIN
+        );
+      } catch (error) {
+        console.error('[Error] Failed to process message:', error);
+        document.getElementById('status').textContent = 'Feil ved oppdatering';
+      }
+    }
+
+    // Height can't transition to/from `auto`, so animate between measured pixel sizes
+    const SECTION_ANIMATION_MS = 350;
+    let sectionAnimationTimer;
+
+    function animateSection(el, applyChange) {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        applyChange();
+        return;
+      }
+
+      clearTimeout(sectionAnimationTimer);
+      const from = el.getBoundingClientRect();
+
+      el.style.transition = 'none';
+      el.style.width = '';
+      el.style.height = '';
+      applyChange();
+      const to = el.getBoundingClientRect();
+
+      if (from.width === to.width && from.height === to.height) {
+        el.style.transition = '';
+        return;
+      }
+
+      el.style.overflow = 'hidden';
+      el.style.width = `${from.width}px`;
+      el.style.height = `${from.height}px`;
+      el.getBoundingClientRect(); // force reflow so the start size is applied before animating
+
+      el.style.transition = '';
+      el.style.width = `${to.width}px`;
+      el.style.height = `${to.height}px`;
+
+      sectionAnimationTimer = setTimeout(() => {
+        el.style.width = '';
+        el.style.height = '';
+        el.style.overflow = '';
+      }, SECTION_ANIMATION_MS + 30);
+    }
+
+    function handleResize(payload) {
+      const validSizes = ['large', 'medium', 'small'];
+      const size = validSizes.includes(payload?.size) ? payload.size : 'large';
+
+      const validHeights = ['auto', 'short', 'medium', 'tall'];
+      const height = validHeights.includes(payload?.height) ? payload.height : 'auto';
+
+      const adSection = document.getElementById('adSection');
+      animateSection(adSection, () => {
+        adSection.classList.remove(...validSizes.map(s => `size-${s}`), ...validHeights.map(h => `height-${h}`));
+        adSection.classList.add(`size-${size}`, `height-${height}`);
+      });
+
+      setTimeout(() => adSection.scrollIntoView({ behavior: 'smooth', block: 'center' }), SECTION_ANIMATION_MS + 50);
+
+      window.parent.postMessage(
+        { type: 'AD_RESIZE_ACK', data: { size, height, timestamp: new Date().toISOString() } },
+        ALLOWED_ORIGIN
+      );
+    }
+
     window.addEventListener('message', (event) => {
       // Origin validation
       if (event.origin !== ALLOWED_ORIGIN) {
@@ -504,100 +632,14 @@
         return;
       }
 
-      if (event.data?.type === 'AD_CONFIG_UPDATE') {
-        try {
-          const { payload } = event.data;
-          const container = document.getElementById('adContainer');
-
-          if (payload.heading !== undefined) {
-            document.getElementById('adHeading').textContent = payload.heading || 'Overskrift kommer her';
-          }
-
-          if (payload.body !== undefined) {
-            document.getElementById('adBody').textContent = payload.body;
-          }
-
-          if (payload.ctaText !== undefined) {
-            const ctaBtn = document.getElementById('adCta');
-            ctaBtn.textContent = payload.ctaText || 'Klikk her';
-            ctaBtn.style.display = payload.ctaText ? 'inline-block' : 'none';
-          }
-
-          if (payload.imageUrl !== undefined) {
-            const imgDiv = document.getElementById('adImage');
-            if (payload.imageUrl) {
-              imgDiv.innerHTML = `<img src="${payload.imageUrl}" alt="Ad image">`;
-              imgDiv.classList.add('has-image');
-            } else {
-              imgDiv.textContent = 'Bilde kommer her';
-              imgDiv.classList.remove('has-image');
-            }
-          }
-
-          if (payload.adLabel !== undefined) {
-            const labels = {
-              ad: 'Annonse',
-              sponsored: 'Sponset innhold',
-              advertiser: 'Annonsørinnhold'
-            };
-            const key = Object.prototype.hasOwnProperty.call(labels, payload.adLabel) ? payload.adLabel : 'ad';
-            const labelEl = document.getElementById('adLabel');
-            labelEl.textContent = labels[key];
-            labelEl.className = `ad-label label-${key}`;
-          }
-
-          if (payload.theme !== undefined) {
-            const validThemes = ['blue', 'red', 'green', 'dark'];
-            const theme = validThemes.includes(payload.theme) ? payload.theme : 'blue';
-            container.className = `ad-container theme-${theme}`;
-          }
-
-          document.getElementById('status').textContent = 'Oppdatert ✓';
-
-          // Scroll ad into view when size changes
-          //TODO This simply scrolls all updates unto view. SHould probably use resize observer and react only to size change.
-
-          // setTimeout(() => {
-          //   const adSection = document.getElementById('adSection');
-          //   if (adSection) {
-          //     adSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          //   }
-          // }, 100);
-
-          // Send confirmation back to parent (only to trusted origin)
-          window.parent.postMessage(
-            { type: 'AD_CONFIG_ACK', data: { timestamp: new Date().toISOString() } },
-            ALLOWED_ORIGIN
-          );
-        } catch (error) {
-          console.error('[Error] Failed to process message:', error);
-          document.getElementById('status').textContent = 'Feil ved oppdatering';
-        }
+      switch (event.data?.type) {
+        case 'AD_CONFIG_UPDATE':
+          handleConfigUpdate(event.data.payload ?? {});
+          break;
+        case 'AD_RESIZE':
+          handleResize(event.data.payload);
+          break;
       }
-    });
-
-    window.addEventListener('message', (event) => {
-      if (event.origin !== ALLOWED_ORIGIN) return;
-      if (event.data?.type !== 'AD_RESIZE') return;
-
-      const validSizes = ['large', 'medium', 'small'];
-      const requested = event.data.payload?.size;
-      const size = validSizes.includes(requested) ? requested : 'large';
-
-      const validHeights = ['auto', 'short', 'medium', 'tall'];
-      const requestedHeight = event.data.payload?.height;
-      const height = validHeights.includes(requestedHeight) ? requestedHeight : 'auto';
-
-      const adSection = document.getElementById('adSection');
-      adSection.classList.remove(...validSizes.map(s => `size-${s}`), ...validHeights.map(h => `height-${h}`));
-      adSection.classList.add(`size-${size}`, `height-${height}`);
-
-      setTimeout(() => adSection.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
-
-      window.parent.postMessage(
-        { type: 'AD_RESIZE_ACK', data: { size, height, timestamp: new Date().toISOString() } },
-        ALLOWED_ORIGIN
-      );
     });
 
     window.parent.postMessage({
