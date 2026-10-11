@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { getAds } from '../api/ads'
 import { SaveButton } from './SaveButton'
 
 export interface AdConfig {
@@ -53,9 +54,7 @@ export function ConfigForm({ config, onChange }: ConfigFormProps) {
   useEffect(() => {
     const loadSavedAds = async () => {
       try {
-        const response = await fetch('/api/ads')
-        if (!response.ok) throw new Error(`HTTP ${response.status}`)
-        setSavedAds(await response.json())
+        setSavedAds(await getAds())
         setLoadError(false)
       } catch {
         setLoadError(true)

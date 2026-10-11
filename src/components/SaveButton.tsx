@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createAd } from '../api/ads'
 import { AdConfig, SavedAd } from './ConfigForm'
 
 interface SaveButtonProps {
@@ -29,19 +30,7 @@ export function SaveButton({ config, onSaveSuccess }: SaveButtonProps) {
     setStatus('idle')
 
     try {
-      const response = await fetch('/api/ads', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(config),
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const data: SavedAd = await response.json()
+      const data = await createAd(config)
       setStatus('success')
       setMessage(`Utkast lagret med ID: ${data.id}`)
       onSaveSuccess?.(data)
